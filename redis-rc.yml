@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: ReplicationController
+metadata:
+  name: redis
+  namespace: public-service
+spec:
+  replicas: 1
+  selector:
+    name: redis
+  template:
+    metadata:
+      name: redis
+      labels:
+        name: redis
+    spec:
+      containers:
+      - name: redis
+        image: atjapan2015/redis:latest  # sameersbn/redis:latest
+        ports:
+        - name: redis
+          containerPort: 6379
+        volumeMounts:
+        - mountPath: /var/lib/redis
+          name: data
+        livenessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        readinessProbe:
+          exec:
+            command:
+            - redis-cli
+            - ping
+          initialDelaySeconds: 5
+          timeoutSeconds: 1
+      volumes:
+      - name: data
+        persistentVolumeClaim:
+          claimName: gitlab-redis-pvc
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: gitlab-redis-pvc
+  namespace: public-service
+spec:
+  accessModes: [ "ReadWriteMany" ]
+  resources:
+    requests:
+      storage: 5Gi

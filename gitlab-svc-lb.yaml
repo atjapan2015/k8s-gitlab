@@ -1,0 +1,23 @@
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    name: gitlab
+    type: LoadBalancer
+  name: gitlab-balancer
+  namespace: public-service
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+#    nodePort: 31080
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+#    nodePort: 31022
+  selector:
+    name: gitlab
+  type: ClusterIP

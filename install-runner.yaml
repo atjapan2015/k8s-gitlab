@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/podIP: 192.168.32.177/32
+  creationTimestamp: "2019-07-22T05:14:16Z"
+  labels:
+    gitlab.org/action: install
+    gitlab.org/application: runner
+  name: install-runner
+  namespace: gitlab-managed-apps
+  resourceVersion: "927380"
+  selfLink: /api/v1/namespaces/gitlab-managed-apps/pods/install-runner
+  uid: 3a02c1df-20ae-4290-9d93-9d98f29c042c
+spec:
+  containers:
+  - args:
+    - -c
+    - $(COMMAND_SCRIPT)
+    command:
+    - /bin/sh
+    env:
+    - name: HELM_VERSION
+      value: 2.7.2
+    - name: TILLER_NAMESPACE
+      value: gitlab-managed-apps
+    - name: COMMAND_SCRIPT
+      value: |
+        set -eo pipefail
+        helm init --client-only >/dev/null
+        helm repo add runner https://charts.gitlab.io
+        helm repo update >/dev/null
+        helm install runner/gitlab-runner --name runner --tls --tls-ca-cert /data/helm/runner/config/ca.pem --tls-cert /data/helm/runner/config/cert.pem --tls-key /data/helm/runner/config/key.pem --version 0.1.35 --set rbac.create\=true,rbac.enabled\=true --namespace gitlab-managed-apps -f /data/helm/runner/config/values.yaml >/dev/null
+    image: registry.gitlab.com/gitlab-org/cluster-integration/helm-install-image/releases/2.7.2-kube-1.11.0
+    imagePullPolicy: Always
+    name: helm
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /data/helm/runner/config
+      name: configuration-volume
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: tiller-token-8g28j
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: k8scloud.site
+  priority: 0
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: tiller
+  serviceAccountName: tiller
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - configMap:
+      defaultMode: 420
+      items:
+      - key: values.yaml
+        path: values.yaml
+      - key: ca.pem
+        path: ca.pem
+      - key: cert.pem
+        path: cert.pem
+      - key: key.pem
+        path: key.pem
+      name: values-content-configuration-runner
+    name: configuration-volume
+  - name: tiller-token-8g28j
+    secret:
+      defaultMode: 420
+      secretName: tiller-token-8g28j
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2019-07-22T05:14:16Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2019-07-22T05:14:16Z"
+    message: 'containers with unready status: [helm]'
+    reason: ContainersNotReady
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2019-07-22T05:14:16Z"
+    message: 'containers with unready status: [helm]'
+    reason: ContainersNotReady
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2019-07-22T05:14:16Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - image: registry.gitlab.com/gitlab-org/cluster-integration/helm-install-image/releases/2.7.2-kube-1.11.0
+    imageID: ""
+    lastState: {}
+    name: helm
+    ready: false
+    restartCount: 0
+    state:
+      waiting:
+        message: 'rpc error: code = Unknown desc = Error response from daemon: Get
+          https://registry.gitlab.com/v2/gitlab-org/cluster-integration/helm-install-image/releases/2.7.2-kube-1.11.0/manifests/latest:
+          Get https://gitlab.com/jwt/auth?scope=repository%3Agitlab-org%2Fcluster-integration%2Fhelm-install-image%2Freleases%2F2.7.2-kube-1.11.0%3Apull&service=container_registry:
+          net/http: TLS handshake timeout'
+        reason: ErrImagePull
+  hostIP: 172.16.100.136
+  phase: Pending
+  qosClass: BestEffort
+  startTime: "2019-07-22T05:14:16Z"

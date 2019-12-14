@@ -1,0 +1,15 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: gitlab-pg-pv
+  namespace: public-service
+  labels:
+    type: local
+spec:
+  storageClassName: gitlabpgstorage
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/u02/k8sdata/gitlabpath/gitlabpgpath"
