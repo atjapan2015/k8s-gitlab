@@ -8,13 +8,13 @@
 #k apply -f gitlab-pg-pv.yaml
 k apply -f gitlab-pvc.yaml
 #k apply -f gitlab-pv.yaml
-k apply -f gitlab-rc.yml
+k apply -f gitlab-rc.yaml
 k apply -f gitlab-svc-lb.yaml
-k apply -f gitlab-svc.yml
-k apply -f postgresql-rc.yml
-k apply -f postgresql-svc.yml
+k apply -f gitlab-svc.yaml
+k apply -f postgresql-rc.yaml
+k apply -f postgresql-svc.yaml
 #k apply -f redis-pv.yaml
-k apply -f redis-rc.yml
-k apply -f redis-svc.yml
+k apply -f redis-rc.yaml
+k apply -f redis-svc.yaml
 
 root/gitlab123

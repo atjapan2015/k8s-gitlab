@@ -12,12 +12,12 @@ spec:
     port: 80
     protocol: TCP
     targetPort: 80
-#    nodePort: 31080
+    nodePort: 32545
   - name: ssh
     port: 22
     protocol: TCP
     targetPort: 22
-#    nodePort: 31022
+#    nodePort: 32022
   selector:
     name: gitlab
-  type: ClusterIP
+  type: NodePort

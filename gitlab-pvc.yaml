@@ -4,7 +4,9 @@ metadata:
   name: gitlab-gitlab
   namespace: public-service
 spec:
-  accessModes: [ "ReadWriteMany" ]
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
   resources:
     requests:
       storage: 10Gi

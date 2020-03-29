@@ -62,7 +62,8 @@ metadata:
   name: gitlab-pg-pvc
   namespace: public-service
 spec:
-  accessModes: [ "ReadWriteMany" ]
+  storageClassName: local-path
+  accessModes: [ "ReadWriteOnce" ]
   resources:
     requests:
       storage: 5Gi
